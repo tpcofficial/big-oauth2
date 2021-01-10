@@ -1,0 +1,28 @@
+{
+  "name": "@tpcofficial/big-oauth2",
+  "version": "0.1.0",
+  "description": "A OAuth2 module to easily allow you to integrate your applications authentication with 3rd party IdPs. Returns user data with minimal code to help you create and manage users in your databases!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start-lin": "BIGOAUTH_DEBUG=true && node index.js",
+    "start-win": "SET BIGOAUTH_DEBUG=true && node index.js",
+    "start": "node index.js",
+    "up": "npm publish --access=public",
+    "start-import": "node importsTest.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tpcofficial/big-oauth2.git"
+  },
+  "author": "TPC Grp. UK",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/tpcofficial/big-oauth2/issues"
+  },
+  "homepage": "https://github.com/tpcofficial/big-oauth2#readme",
+  "dependencies": {
+    "glob": "^7.1.6",
+    "require-dir": "^1.2.0"
+  }
+}
