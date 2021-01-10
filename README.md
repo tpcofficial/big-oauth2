@@ -40,3 +40,14 @@ var app = express();
 app.use("/OAuth2", oauth2Router);
 app.listen(8080);
 ```
+
+## Contribution (get involved)
+
+We love building a healthy community, and sadly 1 person with barely any spare time probably can't do this alone.
+
+Feel free to get involved and help us grow the project!
+
+To help with reading and understanding commits and code we use:
+
+- [GitMoji](https://gitmoji.dev/)
+- [Sentry](https://sentry.io)
