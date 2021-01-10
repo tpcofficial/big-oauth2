@@ -2,6 +2,10 @@
 
 A Node.js module for OAuth2 to easily allow you to integrate your applications authentication with 3rd party IdPs. Returns user data with minimal code to help you create and manage users in your databases!
 
+## Note
+
+For purely concept, may use premade authentication libraries for the OAuth2 APIs offered by the services, we'll then work on replacing the libraries for http requests using `node-fetch`
+
 ## Usage (hopefully)
 
 ```js
