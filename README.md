@@ -22,7 +22,7 @@ router.get('/', function(req, res, next) {
 
 router.get('/discord/authorize', function(req, res, next) {
     try {
-        flowHandler.Discord.startFlow().then(res.redirect)
+        discordFlowHandler.startFlow().then(res.redirect)
     } catch (e) {
         next(createError(500))
     }
@@ -30,7 +30,7 @@ router.get('/discord/authorize', function(req, res, next) {
 
 router.get('/discord/callback', function(req, res, next) {
     try {
-        flowHandler.Discord.endFlow().then(console.log) //Logs the users data
+        discordFlowHandler.endFlow().then(console.log) //Logs the users data to the console
     } catch (e) {
         next(createError(500))
     }
