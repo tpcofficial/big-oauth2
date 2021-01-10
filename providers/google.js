@@ -6,7 +6,7 @@
          * 3. Send the access token to an API
          * 
          */
-const { get, post } = require('snekfetch');
+const { get, post } = require('node-fetch');
 
 class GoogleHandler {
     
