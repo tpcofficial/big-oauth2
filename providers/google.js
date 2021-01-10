@@ -15,7 +15,7 @@ class GoogleHandler {
         this.client_secret = configobj.client_secret;
 
         this.redirect_uri = configobj.redirect_uri; //We recommend settings this to something like https://example.org/api/oauth2/google
-        this.scope = configobj.scope >= 1 ? configobj.scope : "userinfo.profile userinfo.email";//Default to profile scope if no scope is defined    -  && configobj.isArray()
+        this.scope = configobj.scope >= 1 ? configobj.scope : "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";//Default to profile scope if no scope is defined    -  && configobj.isArray()
         this.auth_base_url = "https://accounts.google.com/o/oauth2/v2/auth"
         this.token_url = "https://www.googleapis.com/oauth2/v4/token"
     }
