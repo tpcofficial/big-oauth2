@@ -17,7 +17,7 @@ This project is ran for free by the public and we hope to make your life simpler
 ### Parts of the project
 
 - [big-oauth2](https://github.com/tpcofficial/big-oauth2) (An npm package for the project, this is our main priority at the moment)
-- [big-auth2-express](https://github.com/tpcofficial/big-oauth2-express) (An npm package to easily implement routes for the OAuth2 flow)
+- [big-oauth2-express](https://github.com/tpcofficial/big-oauth2-express) (An npm package to easily implement routes for the OAuth2 flow)
 
 ## Usage (hopefully)
 
