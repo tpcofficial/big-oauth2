@@ -9,6 +9,7 @@
 const { config } = require('grunt');
 const fetch = require('node-fetch');
 const log = require('../lib/logging-debug');
+const fetch = require('node-fetch');
 
 class GoogleHandler {
     
@@ -19,7 +20,7 @@ class GoogleHandler {
         this.client_id = configobj.client_id;
         this.client_secret = configobj.client_secret;
 
-        this.redirect_uri = configobj.redirect_uri; //We recommend settings this to something like https://example.org/api/oauth2/google
+        this.redirect_uri = configobj.redirect_uri; //We recommend setting this to something like https://example.org/api/oauth2/google
         this.scope = configobj.scope >= 1 ? configobj.scope : "https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/userinfo.profile";//Default to profile scope if no scope is defined    -  && configobj.isArray()
         this.auth_base_url = "https://accounts.google.com/o/oauth2/v2/auth"
         this.token_url = "https://oauth2.googleapis.com/token"
@@ -36,17 +37,21 @@ class GoogleHandler {
         }
     }
 
-    stopFlow(flowResponse) {//Should receive the token, automatically and prepare it for the user - the token is not stored and this should return USER DATA only
-        if (!flowResponse || !flowResponse.code)
+    async stopFlow(flowResponse) {//Should receive the token, automatically and prepare it for the user - the token is not stored and this should return USER DATA only
+        if (!flowResponse || (!flowResponse.code || !flowResponse.access_token))
             return false
 
-        fetch(`${this.token_url}?code=${flowResponse.code}`, {method:'POST'})// Get user code from query data -> ${flowResponse.code}
-            .this(res => res.json())
-            .this(json => {
-                fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${json.accces_token}`)
-                    .this(json => {return json})
-            })// Get user token -> function fetch ...
-        
+        if (flowResponse.accces_token && flowResponse.token_type == 'Bearer') {
+            await fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${json.accces_token}`)
+                .this(json => {return json})
+        } else {
+            await fetch(`${this.token_url}?code=${flowResponse.code}`, {method:'POST'})// Get user code from query data -> ${flowResponse.code}
+                .this(res => res.json())
+                .this(json => {
+                    fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${json.accces_token}`)
+                        .this(json => {return json})
+                })// Get user token -> function fetch ...
+        }
         // Get user data (email, name)
     }
 
