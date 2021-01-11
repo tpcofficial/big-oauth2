@@ -37,17 +37,21 @@ class GoogleHandler {
         }
     }
 
-    stopFlow(flowResponse) {//Should receive the token, automatically and prepare it for the user - the token is not stored and this should return USER DATA only
-        if (!flowResponse || !flowResponse.code)
+    async stopFlow(flowResponse) {//Should receive the token, automatically and prepare it for the user - the token is not stored and this should return USER DATA only
+        if (!flowResponse || (!flowResponse.code || !flowResponse.access_token))
             return false
 
-        fetch(`${this.token_url}?code=${flowResponse.code}`, {method:'POST'})// Get user code from query data -> ${flowResponse.code}
-            .this(res => res.json())
-            .this(json => {
-                fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${json.accces_token}`)
-                    .this(json => {return json})
-            })// Get user token -> function fetch ...
-        
+        if (flowResponse.accces_token) {
+            fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${json.accces_token}`)
+                .this(json => {return json})
+        } else {
+            await fetch(`${this.token_url}?code=${flowResponse.code}`, {method:'POST'})// Get user code from query data -> ${flowResponse.code}
+                .this(res => res.json())
+                .this(json => {
+                    fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${json.accces_token}`)
+                        .this(json => {return json})
+                })// Get user token -> function fetch ...
+        }
         // Get user data (email, name)
     }
 
