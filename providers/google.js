@@ -29,7 +29,7 @@ class GoogleHandler {
     startFlow() {//Should return a uri to begin the OAuth2 flow and gain user consent
         log.info('Start of OAuth2 flow, generating redirect uri to gain user consent');
         try {
-            return `${this.auth_base_url}?client_id=${this.client_id}&response_type=token&scope=${this.scope[1]}&redirect_uri=${this.redirect_uri}/callback`;
+            return `${this.auth_base_url}?client_id=${this.client_id}&response_type=token&scope=${this.scope}&redirect_uri=${this.redirect_uri}/callback`;
         } catch (e) {
             log.error("Failed to start OAuth2 flow: Couldn't generate (and/or) return the consent uri");
             throw "Failed to generate consent uri";
