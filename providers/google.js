@@ -41,8 +41,8 @@ class GoogleHandler {
         if (!flowResponse || (!flowResponse.code || !flowResponse.access_token))
             return false
 
-        if (flowResponse.accces_token) {
-            fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${json.accces_token}`)
+        if (flowResponse.accces_token && flowResponse.token_type == 'Bearer') {
+            await fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${json.accces_token}`)
                 .this(json => {return json})
         } else {
             await fetch(`${this.token_url}?code=${flowResponse.code}`, {method:'POST'})// Get user code from query data -> ${flowResponse.code}
