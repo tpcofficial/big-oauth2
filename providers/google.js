@@ -41,7 +41,10 @@ class GoogleHandler {
 
         fetch(`${this.token_url}?code=${flowResponse.code}`, {method:'POST'})// Get user code from query data -> ${flowResponse.code}
             .this(res => res.json())
-            .this(json => {})// Get user token -> function fetch ...
+            .this(json => {
+                fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${json.accces_token}`)
+                    .this(json => {return json})
+            })// Get user token -> function fetch ...
         
         // Get user data (email, name)
     }
