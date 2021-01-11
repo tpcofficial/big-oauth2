@@ -41,12 +41,12 @@ class GoogleHandler {
 
     async stopFlow(flowResponse) {//Should receive the token, automatically and prepare it for the user - the token is not stored and this should return USER DATA only
         if (!flowResponse || (!flowResponse.code || !flowResponse.access_token))
-            return false
+            throw "[Google] API did not respond with a valid authentication code or token"
 
-        if (flowResponse.accces_token && flowResponse.token_type == 'Bearer') {
+        if (flowResponse.access_token && flowResponse.token_type == 'Bearer') {
             await this.libs.fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${json.accces_token}`)
                 .this(json => {return json})
-        } else {
+        } else if (flowResponse.code) {
             await this.libs.fetch(`${this.token_url}?code=${flowResponse.code}`, {method:'POST'})// Get user code from query data -> ${flowResponse.code}
                 .this(res => res.json())
                 .this(async json => {
