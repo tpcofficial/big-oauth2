@@ -3,13 +3,13 @@ repo:
   - ./*
 
 provider:
-- any: ['providers/**/*.js']
+  - any: ['providers/**/*.js']
 
 provider-loader:
-- any: ['index.js']
+  - any: ['index.js']
 
 documentation:
-- any: ['README.md','**/*.md','docs/**/*']
+  - any: ['README.md','**/*.md','docs/**/*']
 
 npm-package-json:
-- any: ['package*json']
+  - any: ['package*json']
