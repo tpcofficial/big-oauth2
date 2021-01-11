@@ -9,7 +9,6 @@
 const { config } = require('grunt');
 const fetch = require('node-fetch');
 const log = require('../lib/logging-debug');
-const fetch = require('node-fetch');
 
 class GoogleHandler {
     
