@@ -1,7 +1,7 @@
 /**
- * Google OAuth2 flow
+ * Discord OAuth2 flow
  * 
- * 1. Obtain an access token from Google Authorization server
+ * 1. Obtain an access token from Discord Authorization server
  * 2. Examine scopes of access granted by user
  * 3. Send the access token to an API
  * 
@@ -10,7 +10,6 @@ const fetch = require('node-fetch');
 const log = require('../lib/logging-debug');
 
 class DiscordHandler {
-    
     constructor(configobj,extraOptions = {}) {
         if (!configobj)
             throw "No configuration object provided"
