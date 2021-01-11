@@ -6,6 +6,19 @@ A Node.js module for OAuth2 to easily allow you to integrate your applications a
 
 For purely concept, may use premade authentication libraries for the OAuth2 APIs offered by the services, we'll then work on replacing the libraries for http requests using `node-fetch`
 
+## The big-oauth2 project
+
+OAuth2 can be complicated and annoying, so we're trying to make it simpler!
+
+big-oauth2 is a project aimed at simplifying the OAuth2 flow for people who are new to using the standard, this helps improve the security of authentication on new web applications as well as making them easier to access.
+
+This project is ran for free by the public and we hope to make your life simpler!
+
+### Parts of the project
+
+- [big-oauth2](https://github.com/tpcofficial/big-oauth2) (An npm package for the project, this is our main priority at the moment)
+- [big-auth2-express](https://github.com/tpcofficial/big-oauth2-express) (An npm package to easily implement routes for the OAuth2 flow)
+
 ## Usage (hopefully)
 
 ```js
