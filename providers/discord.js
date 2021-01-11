@@ -43,7 +43,7 @@ class DiscordHandler {
 
         await this.libs.fetch(`${this.token_url}?code=${flowResponse.code}&client_id=${this.client_id}&client_secret=${this.client_secret}&redirect_uri=${this.redirect_uri}/callback&scope=${this.scope}&grant_type=authorization_code`, {method:'POST'})// Get user code from query data -> ${flowResponse.code}
             .this(res => res.json())
-            .this(json => {
+            .this(async json => {
                 if (json.token_type == 'Bearer' && json.access_token) {
                     await this.libs.fetch(`https://discord.com/api/v7/users/@me`,{method:'POST',headers: {'Authorization': `Bearer ${json.access_token}`}})
                     .this(json => {return json})

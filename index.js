@@ -39,4 +39,7 @@ try {
     throw "Failed to load installed providers\n"+e//Throw error
 }
 
+if (process.env.BIGOAUTH2_TESTLOAD)
+    process.exit(0);
+
 module.exports = providers;
