@@ -5,13 +5,15 @@
 // Load console logging library
 const log = require('./lib/logging-debug');
 
+
+//Monitoring with sentry.io
 log.info('Loading sentry for error and performance management for development');
-if (!process.env.NO_SENTRY) {
-    const Sentry = require("@sentry/node");
+if (!process.env.NO_SENTRY) {//Check if user opted out
+    const Sentry = require("@sentry/node");//Require sentry
     // or use es6 import statements
     // import * as Sentry from '@sentry/node';
     
-    const Tracing = require("@sentry/tracing");
+    const Tracing = require("@sentry/tracing");//Require performance tracing
     // or use es6 import statements
     // import * as Tracing from '@sentry/tracing';
     Sentry.init({
@@ -23,17 +25,18 @@ if (!process.env.NO_SENTRY) {
 
         // We recommend adjusting this value in production, or using tracesSampler
         // for finer control
-        tracesSampleRate: 1.0,
+        tracesSampleRate: 1.0,//Default performance tracing sample rate
     });
 }
 
 // Provider loader
 log.info('Loading OAuth2 provider modules');
 try {
-    const requireDir = require('require-dir');
-    var providers = requireDir('./providers');
+    const requireDir = require('require-dir');//Module to make my life easier
+    var providers = requireDir('./providers');//Load all the providers
 } catch (e) {
-    log.error('Failed to load OAuth2 modules')
+    log.error('Failed to load OAuth2 modules')//Error that providers failed to load
+    throw "Failed to load installed providers\n"+e//Throw error
 }
 
 module.exports = providers;
