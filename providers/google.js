@@ -23,14 +23,17 @@ class GoogleHandler {
         this.auth_base_url = "https://accounts.google.com/o/oauth2/v2/auth"
         this.token_url = "https://oauth2.googleapis.com/token"
 
+        this.libs = {};
+        this.libs.fetch = require('node-fetch');
+        this.libs.log = require('../lib/logging-debug');
     }
 
     startFlow() {//Should return a uri to begin the OAuth2 flow and gain user consent
-        log.info('Start of OAuth2 flow, generating redirect uri to gain user consent');
+        this.libs.log.info('Start of OAuth2 flow, generating redirect uri to gain user consent');
         try {
             return `${this.auth_base_url}?client_id=${this.client_id}&response_type=token&scope=${this.scope}&redirect_uri=${this.redirect_uri}/callback`;
         } catch (e) {
-            log.error("Failed to start OAuth2 flow: Couldn't generate (and/or) return the consent uri");
+            this.libs.log.error("Failed to start OAuth2 flow: Couldn't generate (and/or) return the consent uri");
             throw "Failed to generate consent uri";
         }
     }
@@ -40,13 +43,13 @@ class GoogleHandler {
             return false
 
         if (flowResponse.accces_token && flowResponse.token_type == 'Bearer') {
-            await fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${json.accces_token}`)
+            await this.libs.fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${json.accces_token}`)
                 .this(json => {return json})
         } else {
-            await fetch(`${this.token_url}?code=${flowResponse.code}`, {method:'POST'})// Get user code from query data -> ${flowResponse.code}
+            await this.libs.fetch(`${this.token_url}?code=${flowResponse.code}`, {method:'POST'})// Get user code from query data -> ${flowResponse.code}
                 .this(res => res.json())
                 .this(json => {
-                    fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${json.accces_token}`)
+                    this.libs.fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${json.accces_token}`)
                         .this(json => {return json})
                 })// Get user token -> function fetch ...
         }
