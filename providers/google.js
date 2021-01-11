@@ -11,7 +11,10 @@ const fetch = require('node-fetch');
 
 class GoogleHandler {
     
-    constructor(configobj,extraOptions) {
+    constructor(configobj,extraOptions = {}) {
+        if (!configobj)
+            throw "No configuration object provided"
+        
         this.client_id = configobj.client_id;
         this.client_secret = configobj.client_secret;
 
@@ -23,20 +26,18 @@ class GoogleHandler {
     }
 
     startFlow() {//Should return a uri to begin the OAuth2 flow and gain user consent
-        const body = {};
-
-        fetch(`${this.auth_base_url}?client_id=${this.client_id}&response_type=token&scope=${this.scope[1]}&redirect_uri=${this.redirect_uri}/callback`, {method: 'GET'})
-            .then(res => res.json())
-            .then(json => { try { return (JSON.parse(json)) } catch (e) {throw "bad response"} })
-        console.info('googleflow')
-        
-        // Get uri for auth
+        log.info('Start of OAuth2 flow, generating redirect uri to gain user consent');
+        try {
+            return `${this.auth_base_url}?client_id=${this.client_id}&response_type=token&scope=${this.scope[1]}&redirect_uri=${this.redirect_uri}/callback`;
+        } catch (e) {
+            log.error("Failed to start OAuth2 flow: Couldn't generate (and/or) return the consent uri");
+            throw "Failed to generate consent uri";
+        }
     }
 
     stopFlow(flowResponse) {//Should receive the token, automatically and prepare it for the user - the token is not stored and this should return USER DATA only
         if (!flowResponse || !flowResponse.code)
             return false
-        console.info('googlecallback')
 
         fetch(`${this.token_url}?code=${flowResponse.code}`, {method:'POST'})// Get user code from query data -> ${flowResponse.code}
             .this(res => res.json())
