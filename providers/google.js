@@ -18,6 +18,7 @@ class GoogleHandler {
         this.client_id = configobj.client_id;
         this.client_secret = configobj.client_secret;
 
+        this.response_type = configobj.response_type.length >=1 ? configobj.response_type : 'code';
         this.redirect_uri = configobj.redirect_uri; //We recommend setting this to something like https://example.org/api/oauth2/google
         this.scope = configobj.scope >= 1 ? configobj.scope : "https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/userinfo.profile";//Default to profile scope if no scope is defined    -  && configobj.isArray()
         this.auth_base_url = "https://accounts.google.com/o/oauth2/v2/auth"
@@ -31,7 +32,7 @@ class GoogleHandler {
     startFlow() {//Should return a uri to begin the OAuth2 flow and gain user consent
         this.libs.log.info('Start of OAuth2 flow, generating redirect uri to gain user consent');
         try {
-            return `${this.auth_base_url}?client_id=${this.client_id}&response_type=token&scope=${this.scope}&redirect_uri=${this.redirect_uri}/callback`;
+            return `${this.auth_base_url}?client_id=${this.client_id}&response_type=${this.response_type}&scope=${this.scope}&redirect_uri=${this.redirect_uri}/callback`;
         } catch (e) {
             this.libs.log.error("Failed to start OAuth2 flow: Couldn't generate (and/or) return the consent uri");
             throw "Failed to generate consent uri";
