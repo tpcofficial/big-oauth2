@@ -1,0 +1,13 @@
+name: Greetings
+
+on: [pull_request, issues]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        issue-message: "Welcome to the big-oauth2 project, we love that you've decided to report an issue to help improve our package!\n\nRemeber that most contributors work in their free time, so less import requests (like asking for help) may be delayed in their response."
+        pr-message: "Thanks for contributing to the big-oauth2 project, we'll take a look at your pr as soon as we are able, please remember that this is a community ran project!"
