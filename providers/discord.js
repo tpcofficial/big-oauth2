@@ -1,7 +1,7 @@
 /**
- * Google OAuth2 flow
+ * Discord OAuth2 flow
  * 
- * 1. Obtain an access token from Google Authorization server
+ * 1. Obtain an access token from Discord Authorization server
  * 2. Examine scopes of access granted by user
  * 3. Send the access token to an API
  * 
@@ -10,7 +10,6 @@ const fetch = require('node-fetch');
 const log = require('../lib/logging-debug');
 
 class DiscordHandler {
-    
     constructor(configobj,extraOptions = {}) {
         if (!configobj)
             throw "No configuration object provided"
@@ -45,8 +44,8 @@ class DiscordHandler {
         await this.libs.fetch(`${this.token_url}?code=${flowResponse.code}&client_id=${this.client_id}&client_secret=${this.client_secret}&redirect_uri=${this.redirect_uri}/callback&scope=${this.scope}&grant_type=authorization_code`, {method:'POST'})// Get user code from query data -> ${flowResponse.code}
             .this(res => res.json())
             .this(json => {
-                if (json.token_type == 'Bearer' && json.accces_token) {
-                    this.libs.fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${json.accces_token}`)
+                if (json.token_type == 'Bearer' && json.access_token) {
+                    await this.libs.fetch(`https://discord.com/api/v7/users/@me`,{method:'POST',headers: {'Authorization': `Bearer ${json.access_token}`}})
                     .this(json => {return json})
                 } else {
                     throw "[Discord] No valid authentication data (bearer token) returned by the remote API\n"+JSON.stringify(json);
