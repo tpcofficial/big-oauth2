@@ -70,13 +70,13 @@ class GenericHandler {
                         code:flowResponse.code,
                         client_id:this.client_id,
                         client_secret:this.client_secret,
-                        redirect_uri:this.redirect_uri,
+                        redirect_uri:this.redirect_uri+'/callback',
                         scope:this.scope,
                         grant_type:'authorization_code'
                     });
                     this.libs.log.info(`[${this.platform_name}] Form body method POST exchange ${flowResponse.bodypost}`)
                     this.libs.log.info(`${this.token_url}    |    ${params.toString()}`)
-                    /*this.libs.fetch(`${this.token_url}`, {method:'POST',body: params})// Get user code from query data -> ${flowResponse.code}
+                    this.libs.fetch(`${this.token_url}`, {method:'POST',body: params})// Get user code from query data -> ${flowResponse.code}
                         .then(this.libs.checkStatus)
                         .then(res => res.json())
                         .then(json => {
@@ -92,7 +92,7 @@ class GenericHandler {
                         .catch(e => {
                             this.libs.log.error(`[${this.platform_name}] failed to give us a valid access_token`);
                             reject(`[${this.platform_name}] failed to run through the code exchange flow\n+${String(e)}`);
-                        })*/
+                        })
                 }
             } else {
                 this.libs.log.error('Google did not give us valid data\n'+JSON.stringify(flowResponse));
