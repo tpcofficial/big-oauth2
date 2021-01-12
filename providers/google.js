@@ -24,6 +24,7 @@ class GoogleHandler {
         this.libs = {};
         this.libs.fetch = require('node-fetch');
         this.libs.log = require('../lib/logging-debug');
+        this.libs.checkStatus = (res) => {if (res.ok) {return res} else { console.log(res); throw "Unhealthy response"}};
     }
 
     startFlow() {//Should return a uri to begin the OAuth2 flow and gain user consent
