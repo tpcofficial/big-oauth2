@@ -51,7 +51,7 @@ class DiscordHandler {
                 this.libs.OAuth2Lib.stopFlow(returnedData)
                     .then(tokenData => {
                         this.libs.log.info('[Discord] attempting to get user data');
-                        this.libs.fetch(`https://discord.com/api/v7/users/@me`,{method:'POST',headers: {'Authorization': `Bearer ${tokenData.access_token}`}})
+                        this.libs.fetch(`https://discord.com/api/v7/users/@me`,{method:'GET',headers: {'Authorization': `Bearer ${tokenData.access_token}`}})
                             .then(this.libs.checkStatus)
                             .then(res => res.json())
                             .then(json => {
@@ -61,7 +61,7 @@ class DiscordHandler {
                                     platformid:json.id,
                                     email:json.email,
                                     name:json.name,
-                                    picture:json.picture,
+                                    picture:`https://cdn.discordapp.com/avatars/${json.id}/${json.avatar}.png`, // https://github.com/wohali/oauth2-discord-new/issues/14
                                     given_name:json.given_name,
                                     locale:json.locale
                                 })
