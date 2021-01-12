@@ -6,7 +6,25 @@ provider:
   - any: ['providers/**/*.js']
 
 provider-loader:
-  - any: ['index.js']
+  - index.js
+
+provider-google:
+  - providers/google.js
+
+provider-discord:
+  - providers/discord.js
+
+provider-aad:
+  - providers/microsoft-enterprise.js
+
+provider-microsoft:
+  - providers/microsoft.js
+
+provider-github:
+  - providers/github.js
+
+provider-generic:
+  - providers/generic.js
 
 documentation:
   - any: ['README.md','**/*.md','docs/**/*']
