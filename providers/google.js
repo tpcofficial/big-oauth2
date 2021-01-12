@@ -40,28 +40,29 @@ class GoogleHandler {
     }
 
     async stopFlow(flowResponse) {//Should receive the token, automatically and prepare it for the user - the token is not stored and this should return USER DATA only
-        if (flowResponse.code || flowResponse.access_token) {
-            if (flowResponse.access_token && flowResponse.token_type == 'Bearer') {
-                this.libs.log.info('access_token spotted, using this to get data');
-                await this.libs.fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${json.access_token}`)
-                    .this(json => {return json})
-            } else if (flowResponse.code) {
-                this.libs.log.info('code spotted, exchanging');
-                console.log(`${this.token_url}?code=${flowResponse.code}&client_id=${this.client_id}&client_secret=${this.client_secret}&redirect_uri=${this.redirect_uri}/callback&scope=${this.scope}&grant_type=authorization_code`)
-                this.libs.fetch(`${this.token_url}?code=${flowResponse.code}&client_id=${this.client_id}&client_secret=${this.client_secret}&redirect_uri=${this.redirect_uri}/callback&scope=${this.scope}&grant_type=authorization_code`, {method:'POST'})// Get user code from query data -> ${flowResponse.code}
-                    .then(this.libs.checkStatus)
-                    .then(res => res.json())
-                    .then(json => {
-                        //this.libs.fetch(``,{method:`GET`,headers:{'Authorization':`Bearer ${res.json.access_token}`}})
-                        this.libs.log.success('code exchange was successful');
-                        console.log(JSON.stringify(json));
-                        this.libs.log.info('attempting to get user data');
-                        this.libs.fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${json.id_token}`)
-                            .then(this.libs.checkStatus)
-                            .then(res => res.json())
-                            .then(json => {
-                                this.libs.log.success('got the user data!');
-                                this.libs.log.info(json)
+        return new Promise (async (resolve, reject) => {
+            if (flowResponse.code || flowResponse.access_token) {
+                if (flowResponse.access_token && flowResponse.token_type == 'Bearer') {
+                    this.libs.log.info('access_token spotted, using this to get data');
+                    await this.libs.fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${json.access_token}`)
+                        .this(json => {return json})
+                } else if (flowResponse.code) {
+                    this.libs.log.info('code spotted, exchanging');
+                    console.log(`${this.token_url}?code=${flowResponse.code}&client_id=${this.client_id}&client_secret=${this.client_secret}&redirect_uri=${this.redirect_uri}/callback&scope=${this.scope}&grant_type=authorization_code`)
+                    this.libs.fetch(`${this.token_url}?code=${flowResponse.code}&client_id=${this.client_id}&client_secret=${this.client_secret}&redirect_uri=${this.redirect_uri}/callback&scope=${this.scope}&grant_type=authorization_code`, {method:'POST'})// Get user code from query data -> ${flowResponse.code}
+                        .then(this.libs.checkStatus)
+                        .then(res => res.json())
+                        .then(json => {
+                            //this.libs.fetch(``,{method:`GET`,headers:{'Authorization':`Bearer ${res.json.access_token}`}})
+                            this.libs.log.success('code exchange was successful');
+                            console.log(JSON.stringify(json));
+                            this.libs.log.info('attempting to get user data');
+                            this.libs.fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${json.id_token}`)
+                                .then(this.libs.checkStatus)
+                                .then(res => res.json())
+                                .then(json => {
+                                    this.libs.log.success('got the user data!');
+                                    this.libs.log.info(JSON.stringify(json))
                                     resolve( {
                                         platformid:json.sub,
                                         email:json.email,
@@ -69,14 +70,18 @@ class GoogleHandler {
                                         picture:json.picture,
                                         given_name:json.given_name,
                                         locale:json.locale
-                            })
-                    })
+                                    })
+                                })
+                                .catch(()=>{
+                                    reject("[Google] API could not complete the OAuth2 token exchange")
+                                })
+                        })
+                }
+            } else {
+                this.libs.log.error('Google did not give us valid data\n'+JSON.stringify(flowResponse));
+                reject("[Google] API did not respond with a valid authentication code or token");
             }
-        } else {
-            this.libs.log.error('Google did not give us valid data\n'+JSON.stringify(flowResponse));
-            throw "[Google] API did not respond with a valid authentication code or token"
-        }
-
+        })
         // Get user data (email, name)
     }
 
