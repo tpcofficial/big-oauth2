@@ -1,5 +1,7 @@
 # big-oauth2
 
+![Node.js Package](https://github.com/tpcofficial/big-oauth2/workflows/Node.js%20Package/badge.svg)
+
 A Node.js module for OAuth2 to easily allow you to integrate your applications authentication with 3rd party IdPs. Returns user data with minimal code to help you create and manage users in your databases!
 
 ## Note
