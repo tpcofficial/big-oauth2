@@ -41,7 +41,7 @@ class GenericHandler {
     }
 
     async stopFlow(flowResponse) {//Should receive the token, automatically and prepare it for the user - the token is not stored and this should return USER DATA only
-        return new Promise (async (resolve, reject) => {
+        return new Promise ( (resolve, reject) => {
             if (flowResponse.code) {
                 this.libs.log.info(`[${this.platform_name}] Code spotted, exchanging`);
                 //console.log(`${this.token_url}?code=${flowResponse.code}&client_id=${this.client_id}&client_secret=${this.client_secret}&redirect_uri=${this.redirect_uri}/callback&scope=${this.scope}&grant_type=authorization_code`)
