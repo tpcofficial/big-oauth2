@@ -62,7 +62,13 @@ class GoogleHandler {
                             .then(json => {
                                 this.libs.log.success('got the user data!');
                                 this.libs.log.info(json)
-                                return json
+                                    resolve( {
+                                        platformid:json.sub,
+                                        email:json.email,
+                                        name:json.name,
+                                        picture:json.picture,
+                                        given_name:json.given_name,
+                                        locale:json.locale
                             })
                     })
             }
