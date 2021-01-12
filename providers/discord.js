@@ -51,12 +51,12 @@ class DiscordHandler {
         // Get user data (email, name)
     }
 
-    renewToken(token) {//Should renew the token
-
+    renewToken(token) { //Should renew the token
+        throw "Unimplemented"+token
     }
 
-    getData(token) {//Get's user data
-
+    getData(token) { //Get's user data
+    throw "Unimplemented"+token
     }
 }
 
