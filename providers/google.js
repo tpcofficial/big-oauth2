@@ -1,71 +1,79 @@
-        /**
-         * Google OAuth2 flow
-         * 
-         * 1. Obtain an access token from Google Authorization server
-         * 2. Examine scopes of access granted by user
-         * 3. Send the access token to an API
-         * 
-         */
+/**
+ * Google OAuth2 user data retrieval
+ * 
+ * 1. Start your consent request
+ * 2. Forward callback data back to the OAuth2Lib
+ * 3. Get your data! (async)
+ */
+
 class GoogleHandler {
-    
-    constructor(configobj,extraOptions = {}) {
+    constructor(configobj,extraOptions) {
         if (!configobj)
             throw "No configuration object provided"
-        
-        this.client_id = configobj.client_id;
-        this.client_secret = configobj.client_secret;
+            
+        //Required
+        this.config = {};
+        this.config.client_id = configobj.client_id;
+        this.config.client_secret = configobj.client_secret;
+        this.config.redirect_uri = configobj.redirect_uri; //We recommend setting this to something like https://example.org/api/oauth2/google
+        this.config.platform_name = 'Google';
 
-        this.response_type = configobj.response_type ? configobj.response_type : 'code';
-        this.redirect_uri = configobj.redirect_uri; //We recommend setting this to something like https://example.org/api/oauth2/google
-        this.scope = configobj.scope >= 1 ? configobj.scope : "https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/userinfo.profile";//Default to profile scope if no scope is defined    -  && configobj.isArray()
-        this.auth_base_url = "https://accounts.google.com/o/oauth2/v2/auth"
-        this.token_url = "https://oauth2.googleapis.com/token"
+        //Optional
+        this.config.response_type = configobj.response_type ? configobj.response_type : 'code';
+        this.config.scope = configobj.scope >= 1 ? configobj.scope : "https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/userinfo.profile";//Default to profile scope if no scope is defined    -  && configobj.isArray()
+        this.config.auth_base_url = configobj.auth_base_url ? configobj.auth_base_url : "https://accounts.google.com/o/oauth2/v2/auth";
+        this.config.token_url = configobj.token_url ? configobj.token_url : "https://oauth2.googleapis.com/token";
 
         this.libs = {};
         this.libs.fetch = require('node-fetch');
         this.libs.log = require('../lib/logging-debug');
+        this.libs.log.info('Logging loaded, now loading OAuth2Generic')
+        this.libs.OAuth2Generic = require('./generic').GenericHandler;
+        this.libs.log.success("Success loaded OAuth2Generic @ ('./generic')");
+        this.libs.log.info('Loading OAuth2Lib with config: '+JSON.stringify(this.config));
+        this.libs.OAuth2Lib = new this.libs.OAuth2Generic(this.config);
+        this.libs.log.success('Created OAuth2Lib')
     }
 
-    startFlow() {//Should return a uri to begin the OAuth2 flow and gain user consent
-        this.libs.log.info('Start of OAuth2 flow, generating redirect uri to gain user consent');
+    startFlow() {
         try {
-            return `${this.auth_base_url}?client_id=${this.client_id}&response_type=${this.response_type}&scope=${this.scope}&redirect_uri=${this.redirect_uri}/callback`;
+            const redirecturl = this.libs.OAuth2Lib.startFlow();
+            return redirecturl;
         } catch (e) {
-            this.libs.log.error("Failed to start OAuth2 flow: Couldn't generate (and/or) return the consent uri");
-            throw "Failed to generate consent uri";
+            throw "[Google] Could not get the ./generic handler to generic a consent redirect url"
         }
     }
 
-    async stopFlow(flowResponse) {//Should receive the token, automatically and prepare it for the user - the token is not stored and this should return USER DATA only
-        if (flowResponse.code || flowResponse.access_token) {
-            if (flowResponse.access_token && flowResponse.token_type == 'Bearer') {
-                this.libs.log.info('access_token spotted, using this to get data');
-                await this.libs.fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${json.access_token}`)
-                    .this(json => {return json})
-            } else if (flowResponse.code) {
-                this.libs.log.info('code spotted, exchanging');
-                await this.libs.fetch(`${this.token_url}?code=${flowResponse.code}`, {method:'POST'})// Get user code from query data -> ${flowResponse.code}
-                    .this(res => res.json())
-                    .this(async json => {
-                        await this.libs.fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${json.access_token}`)
-                            .this(json => {return json})
-                    })// Get user token -> function fetch ...
-            }
-        } else {
-            this.libs.log.error('Google did not give us valid data\n'+String(flowResponse));
-            throw "[Google] API did not respond with a valid authentication code or token"
-        }
-
-        // Get user data (email, name)
-    }
-
-    renewToken(token) {//Should renew the token
-
-    }
-
-    getData(token) {//Get's user data
-
+    async stopFlow(returnedData) {
+        return new Promise ( async (resolve, reject) => {
+            if (returnedData.code)
+                this.libs.OAuth2Lib.stopFlow(returnedData)
+                    .then(tokenData => {
+                        this.libs.log.info('[Google] attempting to get user data');
+                        this.libs.fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${tokenData.id_token}`)
+                            .then(this.libs.checkStatus)
+                            .then(res => res.json())
+                            .then(json => {
+                                this.libs.log.success('got the user data!');
+                                this.libs.log.info(JSON.stringify(json))
+                                resolve( {
+                                    platformid:json.sub,
+                                    email:json.email,
+                                    name:json.name,
+                                    picture:json.picture,
+                                    given_name:json.given_name,
+                                    locale:json.locale
+                                })
+                            })
+                            .catch(()=>{
+                                reject("[Google] API could not complete the OAuth2 token exchange")
+                            })
+                    })
+                    .catch(e => {reject("[Google] User did not return with a valid auth code (during stopFlow)\n"+String(e))})
+            else
+                reject("[Google] User did not return with an auth code at all")
+        });
     }
 }
 
-module.exports = {GoogleHandler};
+module.exports = {GoogleHandler}
