@@ -43,25 +43,57 @@ class GenericHandler {
     async stopFlow(flowResponse) {//Should receive the token, automatically and prepare it for the user - the token is not stored and this should return USER DATA only
         return new Promise (async (resolve, reject) => {
             if (flowResponse.code) {
-            this.libs.log.info(`[${this.platform_name}] Code spotted, exchanging`);
-            //console.log(`${this.token_url}?code=${flowResponse.code}&client_id=${this.client_id}&client_secret=${this.client_secret}&redirect_uri=${this.redirect_uri}/callback&scope=${this.scope}&grant_type=authorization_code`)
-            this.libs.fetch(`${this.token_url}?code=${flowResponse.code}&client_id=${this.client_id}&client_secret=${this.client_secret}&redirect_uri=${this.redirect_uri}/callback&scope=${this.scope}&grant_type=authorization_code`, {method:'POST'})// Get user code from query data -> ${flowResponse.code}
-                .then(this.libs.checkStatus)
-                .then(res => res.json())
-                .then(json => {
-                    //this.libs.fetch(``,{method:`GET`,headers:{'Authorization':`Bearer ${res.json.access_token}`}})
-                    if (json.access_token) {
-                        this.libs.log.success(`[${this.platform_name}] code exchange was successful`);
-                        resolve(json);
-                    } else {
-                        this.libs.log.error(`[${this.platform_name}] code exchange failed`);
-                        reject(`[${this.platform_name}] failed to complete the code excahnge`);
-                    }
-                })
-                .catch(e => {
-                    this.libs.log.error(`[${this.platform_name}] failed to give us a valid access_token`);
-                    reject(`[${this.platform_name}] failed to run through the code exchange flow\n+${String(e)}`);
-                })
+                this.libs.log.info(`[${this.platform_name}] Code spotted, exchanging`);
+                //console.log(`${this.token_url}?code=${flowResponse.code}&client_id=${this.client_id}&client_secret=${this.client_secret}&redirect_uri=${this.redirect_uri}/callback&scope=${this.scope}&grant_type=authorization_code`)
+                if (!flowResponse.bodypost) {
+                    this.libs.log.info(`[${this.platform_name}] Query method POST exchange`)
+                    this.libs.fetch(`${this.token_url}?code=${flowResponse.code}&client_id=${this.client_id}&client_secret=${this.client_secret}&redirect_uri=${this.redirect_uri}/callback&scope=${this.scope}&grant_type=authorization_code`, {method:'POST'})// Get user code from query data -> ${flowResponse.code}
+                        .then(this.libs.checkStatus)
+                        .then(res => res.json())
+                        .then(json => {
+                            //this.libs.fetch(``,{method:`GET`,headers:{'Authorization':`Bearer ${res.json.access_token}`}})
+                            if (json.access_token) {
+                                this.libs.log.success(`[${this.platform_name}] code exchange was successful`);
+                                resolve(json);
+                            } else {
+                                this.libs.log.error(`[${this.platform_name}] code exchange failed`);
+                                reject(`[${this.platform_name}] failed to complete the code excahnge`);
+                            }
+                        })
+                        .catch(e => {
+                            this.libs.log.warn(`[${this.platform_name}] failed to give us a valid access_token`);
+                            reject(`[${this.platform_name}] failed to run through the code exchange flow\n+${String(e)}`);
+                        })
+                } else {
+                    const {URLSearchParams} = require('url');
+                    const params = new URLSearchParams({
+                        code:flowResponse.code,
+                        client_id:this.client_id,
+                        client_secret:this.client_secret,
+                        redirect_uri:this.redirect_uri,
+                        scope:this.scope,
+                        grant_type:'authorization_code'
+                    });
+                    this.libs.log.info(`[${this.platform_name}] Form body method POST exchange ${flowResponse.bodypost}`)
+                    this.libs.log.info(`${this.token_url}    |    ${params.toString()}`)
+                    /*this.libs.fetch(`${this.token_url}`, {method:'POST',body: params})// Get user code from query data -> ${flowResponse.code}
+                        .then(this.libs.checkStatus)
+                        .then(res => res.json())
+                        .then(json => {
+                            //this.libs.fetch(``,{method:`GET`,headers:{'Authorization':`Bearer ${res.json.access_token}`}})
+                            if (json.access_token) {
+                                this.libs.log.success(`[${this.platform_name}] code exchange was successful`);
+                                resolve(json);
+                            } else {
+                                this.libs.log.warn(`[${this.platform_name}] code exchange failed`);
+                                reject(`[${this.platform_name}] failed to complete the code excahnge`);
+                            }
+                        })
+                        .catch(e => {
+                            this.libs.log.error(`[${this.platform_name}] failed to give us a valid access_token`);
+                            reject(`[${this.platform_name}] failed to run through the code exchange flow\n+${String(e)}`);
+                        })*/
+                }
             } else {
                 this.libs.log.error('Google did not give us valid data\n'+JSON.stringify(flowResponse));
                 reject(`[${this.platform_name}] API did not respond with a valid authentication code or token`);

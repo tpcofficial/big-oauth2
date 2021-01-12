@@ -21,8 +21,8 @@ class GoogleHandler {
         //Optional
         this.config.response_type = configobj.response_type ? configobj.response_type : 'code';
         this.config.scope = configobj.scope >= 1 ? configobj.scope : "https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/userinfo.profile";//Default to profile scope if no scope is defined    -  && configobj.isArray()
-        this.config.auth_base_url = "https://accounts.google.com/o/oauth2/v2/auth"
-        this.config.token_url = "https://oauth2.googleapis.com/token"
+        this.config.auth_base_url = configobj.auth_base_url ? configobj.auth_base_url : "https://accounts.google.com/o/oauth2/v2/auth";
+        this.config.token_url = configobj.token_url ? configobj.token_url : "https://oauth2.googleapis.com/token";
 
         this.libs = {};
         this.libs.fetch = require('node-fetch');
