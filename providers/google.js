@@ -6,9 +6,6 @@
          * 3. Send the access token to an API
          * 
          */
-const fetch = require('node-fetch');
-const log = require('../lib/logging-debug');
-
 class GoogleHandler {
     
     constructor(configobj,extraOptions = {}) {
