@@ -28,7 +28,7 @@ class GenericHandler {
         this.libs = {};
         this.libs.fetch = require('node-fetch');
         this.libs.log = require('../lib/logging-debug');
-        this.libs.checkStatus = (res) => {if (res.ok) {return res} else { console.log(res); throw "Unhealthy response"}};
+        this.libs.checkStatus = (res) => {if (res.ok) {return res} else { this.libs.log.error(res); throw "Unhealthy response"}};
     }
 
     startFlow() {//Should return a uri to begin the OAuth2 flow and gain user consent
@@ -77,7 +77,7 @@ class GenericHandler {
                         grant_type:'authorization_code'
                     });
                     this.libs.log.info(`${this.token_url}    |    ${params.toString()}`)
-                    this.libs.fetch(`${this.token_url}`, {method:'POST',body: params})// Get user code from query data -> ${flowResponse.code}
+                    this.libs.fetch(`${this.token_url}`, {method:'POST',body: params, headers: {'Accept':'application/json'} })// Get user code from query data -> ${flowResponse.code}
                         .then(this.libs.checkStatus)
                         .then(res => res.json())
                         .then(json => {
@@ -92,7 +92,8 @@ class GenericHandler {
                         })
                         .catch(e => {
                             this.libs.log.error(`[${this.platform_name}] failed to give us a valid access_token`);
-                            reject(`[${this.platform_name}] failed to run through the code exchange flow\n+${String(e)}`);
+                            //reject(`[${this.platform_name}] failed to run through the code exchange flow\n+${String(e)}`);
+                            throw e;
                         })
                 }
             } else {
