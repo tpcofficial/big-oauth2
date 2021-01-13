@@ -47,7 +47,7 @@ class GitHubHandler {
     }
 
     async stopFlow(returnedData) {
-        return new Promise ( async (resolve, reject) => {
+        return new Promise ( (resolve, reject) => {
             if (returnedData.code) {
                 returnedData['bodypost']=true;
                 this.libs.OAuth2Lib.stopFlow(returnedData)
