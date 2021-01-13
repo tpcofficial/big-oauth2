@@ -4,7 +4,12 @@
 name: Node.js Package
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      placeholder:
+        description: 'Placeholder'
+        required: false
+        default: ''
   release:
     types: [created]
 
