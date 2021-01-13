@@ -1,5 +1,3 @@
-const { config } = require('process');
-
         /**
          * Generic OAuth2 flow
          * 
@@ -25,7 +23,7 @@ class GenericHandler {
         this.response_type = configobj.response_type ? configobj.response_type : null;
         this.scope = configobj.scope ? configobj.scope : null;//Default to profile scope if no scope is defined    -  && configobj.isArray()
         this.platform_name = configobj.platform_name ? configobj.platform_name : 'generic';
-        this.extra_auth_params = configobj.extra_auth_params ? '&'+config.extra_auth_params : '';
+        this.extra_auth_params = configobj.extra_auth_params ? '&'+configobj.extra_auth_params : '';
 
         this.libs = {};
         this.libs.fetch = require('node-fetch');
