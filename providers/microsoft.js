@@ -1,7 +1,7 @@
 class MicrosoftHandler {
     constructor(configobj, extraOptions = {}) {
         if (!configobj)
-            throw "No configuration object provided"
+            throw "No configuration object provided
 
         //Required
         this.client_id = configobj.client_id;
