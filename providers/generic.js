@@ -1,3 +1,5 @@
+const { config } = require('process');
+
         /**
          * Generic OAuth2 flow
          * 
@@ -23,6 +25,7 @@ class GenericHandler {
         this.response_type = configobj.response_type ? configobj.response_type : null;
         this.scope = configobj.scope ? configobj.scope : null;//Default to profile scope if no scope is defined    -  && configobj.isArray()
         this.platform_name = configobj.platform_name ? configobj.platform_name : 'generic';
+        this.extra_auth_params = configobj.extra_auth_params ? '&'+config.extra_auth_params : '';
 
         this.libs = {};
         this.libs.fetch = require('node-fetch');
@@ -33,7 +36,7 @@ class GenericHandler {
     startFlow() {//Should return a uri to begin the OAuth2 flow and gain user consent
         this.libs.log.info(`[${this.platform_name}] Start of OAuth2 flow, generating redirect uri to gain user consent`);
         try {
-            return `${this.auth_base_url}?client_id=${this.client_id}&response_type=${this.response_type}&scope=${this.scope}&redirect_uri=${this.redirect_uri}/callback`;
+            return `${this.auth_base_url}?client_id=${this.client_id}&response_type=${this.response_type}&scope=${this.scope+this.extra_auth_params}&redirect_uri=${this.redirect_uri}/callback`;
         } catch (e) {
             this.libs.log.error(`[${this.platform_name}] Failed to start OAuth2 flow: Couldn't generate (and/or) return the consent uri`);
             throw `[${this.platform_name}] Failed to generate consent uri\n${e}`;
