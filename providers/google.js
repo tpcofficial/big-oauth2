@@ -59,6 +59,7 @@ class GoogleHandler {
                                 resolve( {
                                     platformid:json.sub,
                                     email:json.email,
+                                    username:json.email,
                                     name:json.name,
                                     picture:json.picture,
                                     given_name:json.given_name,

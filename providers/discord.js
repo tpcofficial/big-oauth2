@@ -61,6 +61,7 @@ class DiscordHandler {
                                     platformid:json.id,
                                     email:json.email,
                                     name:json.name,
+                                    username:json.username,
                                     picture:`https://cdn.discordapp.com/avatars/${json.id}/${json.avatar}.png`, // https://github.com/wohali/oauth2-discord-new/issues/14
                                     given_name:json.given_name,
                                     locale:json.locale
