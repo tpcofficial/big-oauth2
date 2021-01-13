@@ -47,7 +47,7 @@ class GenericHandler {
                 this.libs.log.info(`[${this.platform_name}] Code spotted, exchanging`);
                 //console.log(`${this.token_url}?code=${flowResponse.code}&client_id=${this.client_id}&client_secret=${this.client_secret}&redirect_uri=${this.redirect_uri}/callback&scope=${this.scope}&grant_type=authorization_code`)
                 if (!flowResponse.bodypost) {
-                    this.libs.log.info(`[${this.platform_name}] Query method POST exchange`)
+                    this.libs.log.info(`[${this.platform_name}] Query string method POST exchange`)
                     this.libs.fetch(`${this.token_url}?code=${flowResponse.code}&client_id=${this.client_id}&client_secret=${this.client_secret}&redirect_uri=${this.redirect_uri}/callback&scope=${this.scope}&grant_type=authorization_code`, {method:'POST'})// Get user code from query data -> ${flowResponse.code}
                         .then(this.libs.checkStatus)
                         .then(res => res.json())
@@ -66,6 +66,7 @@ class GenericHandler {
                             reject(`[${this.platform_name}] failed to run through the code exchange flow\n+${String(e)}`);
                         })
                 } else {
+                    this.libs.log.info(`[${this.platform_name}] Body query url encoded method POST exchange`)
                     const {URLSearchParams} = require('url');
                     const params = new URLSearchParams({
                         code:flowResponse.code,
@@ -75,7 +76,6 @@ class GenericHandler {
                         scope:this.scope,
                         grant_type:'authorization_code'
                     });
-                    this.libs.log.info(`[${this.platform_name}] Form body method POST exchange ${flowResponse.bodypost}`)
                     this.libs.log.info(`${this.token_url}    |    ${params.toString()}`)
                     this.libs.fetch(`${this.token_url}`, {method:'POST',body: params})// Get user code from query data -> ${flowResponse.code}
                         .then(this.libs.checkStatus)
