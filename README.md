@@ -24,40 +24,62 @@ This project is ran for free by the public and we hope to make your life simpler
 ## Usage (hopefully)
 
 ```js
-const OAuth2 = require('big-oauth2');
+//We will make an actual usage demo in the future, here's a reduced version of our testing script to suffice while we work on one!
+const log = require('@tpcofficial/pretty-text');
+
+log.info('Loading big-oauth2');
+const OAuth2Lib = require('@tpcofficial/big-oauth2');
+
+log.info('Loading express');
 const express = require('express');
-const createError = require("http-errors");
+const { exit } = require('process');
 
-const discordFlowHandler = new OAuth2.Discord({
-    clientSecret: ...,
-    clientId: ...,
-    redirectUri: ...+'/oauth2/discord/callback'
-});
+log.info('Creating new express app and defining routes');
+const app = new express();
+const router = express.Router();
 
-var oauth2Router = express.Router();
-router.get('/', function(req, res, next) {
-    next(createError(400))
+//Discord testing imports
+log.info('Creating Discord config');
+const discordtestconfig = {
+    client_id: '123456',
+    client_secret: 'a-123456',
+    redirect_uri: 'http://localhost/oauth2/discord'
+};
+
+//Discord
+log.info('Going to attempt to create Discord OAuth2 handler');
+try {
+    const DiscordOAuth = new OAuth2Lib.discord.DiscordHandler(discordtestconfig);
+} catch (e) {
+    log.error('[Discord] Failed to create the object requested.\n'+e);;
+    throw e
 }
+const DiscordOAuth = new OAuth2Lib.discord.DiscordHandler(discordtestconfig);
 
-router.get('/discord/authorize', function(req, res, next) {
-    try {
-        discordFlowHandler.startFlow().then(res.redirect)
-    } catch (e) {
-        next(createError(500))
+//Discord
+router.get('/discord/authorize', (req, res, next) => {
+    const redirurl = DiscordOAuth.startFlow();
+    res.redirect(redirurl);
+})
+router.get('/discord/callback', async (req, res, next) => {
+    const userdata = await DiscordOAuth.stopFlow({code:req.query.code})
+    if (userdata) {
+        log.success('Data received by the callback handler')
+        res.send(JSON.stringify(userdata));       
+    } else {  
+        log.error('Something went wrong!')
     }
-}
+})
 
-router.get('/discord/callback', function(req, res, next) {
-    try {
-        discordFlowHandler.endFlow().then(console.log) //Logs the users data to the console
-    } catch (e) {
-        next(createError(500))
-    }
-}
 
-var app = express();
-app.use("/OAuth2", oauth2Router);
-app.listen(8080);
+//Express crap
+app.use('/oauth2',router)
+app.listen(process.env.PORT || 80);
+log.warn('Raw creds, make sure to not expose them!')
+log.info(`Listening on ${String(process.env.PORT || 80)}`);
+log.success(`URIs to start OAuth2 flows:
+Discord: ${discordtestconfig.redirect_uri}/authorize`)
+
 ```
 
 ## Contribution (get involved)
