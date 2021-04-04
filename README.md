@@ -34,7 +34,7 @@ const discordFlowHandler = new OAuth2.Discord({
     redirectUri: ...+'/oauth2/discord/callback'
 });
 
-var oauth2Router = express.Router();
+var router = express.Router();
 router.get('/', function(req, res, next) {
     next(createError(400))
 }
