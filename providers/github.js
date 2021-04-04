@@ -1,3 +1,4 @@
+/*jshint esversion: 8 */
 /**
  * GitHub OAuth2 user data retrieval
  * 
@@ -9,7 +10,7 @@
 class GitHubHandler {
     constructor(configobj,extraOptions) {
         if (!configobj)
-            throw "No configuration object provided"
+            throw "No configuration object provided";
             
         //Required
         this.config = {};
@@ -29,12 +30,12 @@ class GitHubHandler {
         this.libs = {};
         this.libs.fetch = require('node-fetch');
         this.libs.log = require('../lib/logging-debug');
-        this.libs.log.info('Logging loaded, now loading OAuth2Generic')
+        this.libs.log.info('Logging loaded, now loading OAuth2Generic');
         this.libs.OAuth2Generic = require('./generic').GenericHandler;
         this.libs.log.success("Success loaded OAuth2Generic @ ('./generic')");
         this.libs.log.info('Loading OAuth2Lib with config: '+JSON.stringify(this.config));
         this.libs.OAuth2Lib = new this.libs.OAuth2Generic(this.config);
-        this.libs.log.success('Created OAuth2Lib')
+        this.libs.log.success('Created OAuth2Lib');
     }
 
     startFlow() {
@@ -42,14 +43,14 @@ class GitHubHandler {
             const redirecturl = this.libs.OAuth2Lib.startFlow();
             return redirecturl;
         } catch (e) {
-            throw "[GitHub] Could not get the ./generic handler to generic a consent redirect url"
+            throw "[GitHub] Could not get the ./generic handler to generic a consent redirect url";
         }
     }
 
     async stopFlow(returnedData) {
         return new Promise ( (resolve, reject) => {
             if (returnedData.code) {
-                returnedData['bodypost']=true;
+                returnedData.bodypost=true;
                 this.libs.OAuth2Lib.stopFlow(returnedData)
                     .then(tokenData => {
                         this.libs.log.info('[GitHub] attempting to get user data');
@@ -58,7 +59,7 @@ class GitHubHandler {
                             .then(res => res.json())
                             .then(json => {
                                 this.libs.log.success('got the user data!');
-                                this.libs.log.info(JSON.stringify(json))
+                                this.libs.log.info(JSON.stringify(json));
                                 resolve( {
                                     platformid:json.id,
                                     email:json.email,
@@ -66,19 +67,20 @@ class GitHubHandler {
                                     username:json.login,
                                     picture:json.avatar_url,
                                     given_name:json.given_name,
-                                    locale:json.locale
-                                })
+                                    locale:json.locale,
+                                    platform: 'github'
+                                });
                             })
                             .catch(()=>{
-                                reject("[GitHub] API could not complete the OAuth2 token exchange")
-                            })
+                                reject("[GitHub] API could not complete the OAuth2 token exchange");
+                            });
                     })
-                    .catch(e => {reject("[GitHub] User did not return with a valid auth code (during stopFlow)\n"+String(e))})
+                    .catch(e => {reject("[GitHub] User did not return with a valid auth code (during stopFlow)\n"+String(e));});
             } else {
-                reject("[GitHub] User did not return with an auth code at all")
+                reject("[GitHub] User did not return with an auth code at all");
             }
         });
     }
 }
 
-module.exports = {GitHubHandler}
+module.exports = {GitHubHandler};
