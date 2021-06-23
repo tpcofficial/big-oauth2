@@ -34,6 +34,7 @@ log.info('Loading OAuth2 provider modules');
 try {
     const requireDir = require('require-dir');//Module to make my life easier
     var providers = requireDir('./providers');//Load all the providers
+    if (process.env.BIGOAUTH2_DEBUG) log.info('Providers were loaded')
 } catch (e) {
     log.error('Failed to load OAuth2 modules')//Error that providers failed to load
     throw "Failed to load installed providers\n"+e//Throw error
