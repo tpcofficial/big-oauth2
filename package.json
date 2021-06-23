@@ -25,7 +25,6 @@
   "dependencies": {
     "@sentry/node": "^5.29.2",
     "@sentry/tracing": "^5.29.2",
-    "fetch": "^1.1.0",
     "node-fetch": "^2.6.1",
     "require-dir": "^1.2.0"
   },
