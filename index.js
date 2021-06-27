@@ -6,9 +6,9 @@
 const log = require('./lib/logging-debug');
 
 
-//Monitoring with sentry.io
-log.info('Loading sentry for error and performance management for development');
-if (!process.env.NO_SENTRY) {//Check if user opted out
+if (process.env.SENTRY) {//Check if user opted in
+    //Monitoring with sentry.io
+    log.info('Loading sentry for error and performance management for development');
     const Sentry = require("@sentry/node");//Require sentry
     // or use es6 import statements
     // import * as Sentry from '@sentry/node';
