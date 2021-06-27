@@ -24,7 +24,9 @@ class DiscordHandler {
         this.config.scope = configobj.scope >= 1 ? configobj.scope : "identify email";//Default to profile scope if no scope is defined    -  && configobj.isArray()
         this.config.auth_base_url = configobj.auth_base_url ? configobj.auth_base_url : "https://discord.com/api/v7/oauth2/authorize";
         this.config.token_url = configobj.token_url ? configobj.token_url : "https://discord.com/api/v7/oauth2/token";
-
+        this.config.extra_auth_params = 'prompt=none'
+        this.extra_auth_params = configobj.extra_auth_params ? '&'+configobj.extra_auth_params : '';
+        
         this.libs = {};
         this.libs.fetch = require('node-fetch');
         this.libs.log = require('../lib/logging-debug');
