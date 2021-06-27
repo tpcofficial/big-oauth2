@@ -98,8 +98,8 @@ To help with reading and understanding commits and code we use:
 big-oauth2 uses [Sentry.io](https://sentry.io) to help improve the project.
 
 No personal information or requests should be sent to sentry, and anything that could possibly be identifiable is configured to be sanitised (like personal information, names, keys and request/response data).
-On the release of 1.0.0 expect this to be changed to opt-in and only automatically enabled when passing the BIGOAUTH_DEBUG environment variable.
+This is now an opt-in experience.
 
-If you wish to opt-out of this please add the following environment variable to your startup: NO_SENTRY=true
+If you wish to opt-in of this please add the following environment variable to your startup: SENTRY=true
 
-This will skip the sentry configuration stage.
+This will run the sentry configuration stage, this helps us improve big-oauth2.
